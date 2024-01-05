@@ -14,6 +14,7 @@ def get_scan_index(line):
     scan_ixs = {}
     nums = []
     ixs = []
+
     for ix, x in enumerate(line):
         if x.isnumeric():
             nums.append(x)
@@ -21,13 +22,41 @@ def get_scan_index(line):
             
             if len(ixs) > 1:
                 if ixs[-1]-ixs[-2]>1:
-                    scan_ixs[(''.join(nums[:-1])),ixs[0]]=ixs[:-1]
+                    scan_ixs[(''.join(nums[:-1])),ixs[0]] = ixs[:-1]
                     nums = nums[-1:]
                     ixs = ixs[-1:]
     if ixs:
         scan_ixs[(''.join(nums)),ixs[0]] = ixs
             
     return scan_ixs
+
+def scan_window(lines, i, num, ix):
+    
+    pos = [-1,0,1]
+
+    for j in range(len(pos)):
+        for k in range(len(pos)):
+            if not lines[i+pos[j]][ix+pos[k]].isnumeric():
+                if not lines[i+pos[j]][ix+pos[k]] == '.':
+                    return int(num[0])
+    return 0
+
+def score_rows(lines):
+
+    score = 0
+    for i in range(1, len(lines)):
+
+        scan_ixs = get_scan_index(remove_special_chars(lines[i]))
+        
+        for num, ixs in scan_ixs.items():
+            for ix in ixs:
+                if ix < len(lines[i])-1:
+                    if scan_window(lines, i, num, ix) == 0:
+                        continue
+                    else:
+                        score += scan_window(lines, i, num, ix)
+                        break
+    return score
 
 def main():
 
@@ -38,48 +67,8 @@ def main():
     engine_schematic = pad + '\n' + engine_schematic + '\n' + pad
     
     lines = engine_schematic.split('\n')
-    
-    score = 0
-    for i in range(1, len(lines)):
+          
+    print(score_rows(lines))
         
-        scan_ixs = get_scan_index(remove_special_chars(lines[i]))
-
-        for num, ixs in scan_ixs.items():
-            for ix in ixs:
-                if ix < len(lines[i])-1:
-                    if not lines[i-1][ix].isnumeric():
-                        if not lines[i-1][ix] == '.':
-                            score += int(num[0])
-                            break
-                    if not lines[i-1][ix-1].isnumeric():
-                        if not lines[i-1][ix-1] == '.':    
-                            score += int(num[0])
-                            break
-                    if not lines[i-1][ix+1].isnumeric():
-                        if not lines[i-1][ix+1] == '.':   
-                            score += int(num[0])
-                            break
-                    if not lines[i+1][ix].isnumeric():
-                        if not lines[i+1][ix] == '.':
-                            score += int(num[0])
-                            break
-                    if not lines[i+1][ix-1].isnumeric():
-                        if not lines[i+1][ix-1] == '.':
-                            score += int(num[0])
-                            break 
-                    if not lines[i+1][ix+1].isnumeric():
-                        if not lines[i+1][ix+1] == '.':
-                            score += int(num[0])
-                            break  
-                    if not lines[i][ix-1].isnumeric(): 
-                        if not lines[i][ix-1] == '.':
-                            score += int(num[0])
-                            break
-                    if not lines[i][ix+1].isnumeric():
-                        if not lines[i][ix+1] == '.':
-                            score += int(num[0])            
-                            break
-    print(score)
-
 if __name__ == '__main__':
     main()
