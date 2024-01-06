@@ -23,10 +23,10 @@ def scan_window(lines, i, num, ix):
     
     pos = [-1,0,1]
 
-    for j in range(len(pos)):
-        for k in range(len(pos)):
-            if not lines[i+pos[j]][ix+pos[k]].isnumeric():
-                if not lines[i+pos[j]][ix+pos[k]] == '.':
+    for j in pos:
+        for k in pos:
+            if not lines[i+j][ix+k].isnumeric():
+                if not lines[i+j][ix+k] == '.':
                     return int(num[0])
     return 0
 
